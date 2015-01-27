@@ -28,3 +28,6 @@ Result reply = response.read(Result.class).as(GsonTransport.class);
 byte[] reply = response.readBytes();
 ```
 Here the response is using sitebricks Transport for deserializing the result object.
+
+
+##### The api works successfully with http and https, also is fully compatible with the Google App Engine platform.
