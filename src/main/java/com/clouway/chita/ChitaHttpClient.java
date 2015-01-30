@@ -1,7 +1,6 @@
 package com.clouway.chita;
 
 import com.google.common.base.Strings;
-import com.google.sitebricks.client.Transport;
 
 import java.io.IOException;
 import java.io.InputStream;

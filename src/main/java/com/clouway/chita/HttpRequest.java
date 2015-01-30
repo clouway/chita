@@ -1,7 +1,6 @@
 package com.clouway.chita;
 
 import com.google.common.base.Strings;
-import com.google.sitebricks.client.Transport;
 import org.apache.commons.codec.binary.Base64;
 
 import java.util.HashMap;

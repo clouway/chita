@@ -2,7 +2,6 @@ package com.clouway.chita;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
-import com.google.sitebricks.client.Transport;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -21,7 +20,7 @@ public class CustomTransport implements Transport {
   }
 
   @Override
-  public <T> void out(OutputStream out, Class<T> type, T data) throws IOException {
+  public <T> void out(OutputStream out, Class<T> type, T data) {
     String json = new Gson().toJson(data);
     try {
       ByteStreams.copy(new ByteArrayInputStream(json.getBytes("UTF-8")), out);

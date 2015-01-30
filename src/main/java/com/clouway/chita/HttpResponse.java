@@ -1,6 +1,5 @@
 package com.clouway.chita;
 
-import com.google.sitebricks.client.Transport;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
