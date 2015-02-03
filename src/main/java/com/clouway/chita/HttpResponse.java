@@ -12,7 +12,7 @@ public class HttpResponse {
 
   public interface ResponseRead<E> {
 
-    E as(Class<? extends Transport> var1);
+    E as(Class<? extends ChitaTransport> var1);
 
   }
 
@@ -78,10 +78,10 @@ public class HttpResponse {
   public <E> ResponseRead<E> read(final Class<E> entityClazz) {
     return new ResponseRead<E>() {
       @Override
-      public E as(Class<? extends Transport> clazz) {
+      public E as(Class<? extends ChitaTransport> clazz) {
         E result = null;
         try {
-          Transport transport = clazz.newInstance();
+          ChitaTransport transport = clazz.newInstance();
           result = transport.in(inputStream, entityClazz);
         } catch (InstantiationException e) {
           e.printStackTrace();

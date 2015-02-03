@@ -33,7 +33,7 @@ public class HttpRequest<T>{
 
     private int connectTimeout = 10000;
 
-    private Class<? extends Transport> transportClass;
+    private Class<? extends ChitaTransport> transportClass;
 
     public Builder(TargetUrl url) {
 
@@ -80,7 +80,7 @@ public class HttpRequest<T>{
       return r;
     }
 
-    public Builder as(Class<? extends Transport> transportClass) {
+    public Builder as(Class<? extends ChitaTransport> transportClass) {
       this.transportClass = transportClass;
       return this;
     }
@@ -118,7 +118,7 @@ public class HttpRequest<T>{
     return connectTimeout;
   }
 
-  public Class<? extends Transport> getTransportClass() {
+  public Class<? extends ChitaTransport> getTransportClass() {
     return transportClass;
   }
 
@@ -130,9 +130,9 @@ public class HttpRequest<T>{
     return properties;
   }
 
-  private Class<? extends Transport> transportClass = TextTransport.class;
+  private Class<? extends ChitaTransport> transportClass = TextTransport.class;
 
-  public HttpRequest<T> as(Class<? extends Transport> transportClass) {
+  public HttpRequest<T> as(Class<? extends ChitaTransport> transportClass) {
     this.transportClass = transportClass;
     return this;
   }

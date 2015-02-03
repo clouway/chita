@@ -9,7 +9,7 @@ import java.io.OutputStream;
 /**
  * @author Mihail Lesikov (mlesikov@gmail.com)
  */
-public class TextTransport implements Transport {
+public class TextTransport implements ChitaTransport {
 
 
   @Override
