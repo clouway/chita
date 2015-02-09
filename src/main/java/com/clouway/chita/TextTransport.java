@@ -18,7 +18,7 @@ public class TextTransport implements ChitaTransport {
   }
 
   @Override
-  public <T> void out(OutputStream out, Class<T> type, T data) {
+  public <T> void out(OutputStream out, Class<T> type, T data) throws IOException{
     try {
       IOUtils.write(data.toString(), out);
     } catch (IOException var5) {

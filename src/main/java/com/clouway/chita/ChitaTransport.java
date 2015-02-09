@@ -10,7 +10,7 @@ import java.io.OutputStream;
 public interface ChitaTransport {
   <T> T in(InputStream in, Class<T> type) throws IOException;
 
-  <T> void out(OutputStream out, Class<T> type, T data);
+  <T> void out(OutputStream out, Class<T> type, T data) throws IOException;
 
   String contentType();
 }
