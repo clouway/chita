@@ -18,27 +18,30 @@ import static com.clouway.chita.HttpResponse.dummyResponse;
  * CHITA -  clouway http intelligent transport api
  *
  * Represent a wrapper of a {@link java.net.HttpURLConnection}. The main goal is to represent a builder style
- * http request construction and sending different objects by POST method using sitebricks {@link ChitaTransport}
+ * http request construction and sending different objects by POST/GET/PUT/DELETE method using sitebricks {@link ChitaTransport}
  * <p/>
  * Example:
  * <p/>
  * GET
- * <p/>
+ * <pre>
  * HttpRequest request = httpRequest(new TargetUrl("abv.bg")).build();
  * ChitaHttp chitaClient = new ChitaHttpClient();// in most cases chitaClient should be injected
  * HttpResponse response = chitaClient.execute(request);
- * <p/>
+ * </pre>
+ *
  * POST
- * <p/>
+ * <pre>
  * TargetUrl targetUrl = new TargetUrl("http://telcong.com", "/test/address");
  * HttpRequest request = httpRequest(targetUrl).post(person).as(GsonTransport.class).build();
  * ChitaHttp chitaClient = new ChitaHttpClient();// in most cases chitaClient should be injected
  * HttpResponse response = chitaClient.execute(request);
- * <p/>
+ * </pre>
+ *
  * also there is a way to read an object from the response
- * <p/>
+ * <pre>
  * Result reply = response.read(Result.class).as(GsonTransport.class);
- * <p/>
+ * </pre>
+ *
  * here the response is using sitebricks {@link ChitaTransport} for
  * deserializing the result object
  *

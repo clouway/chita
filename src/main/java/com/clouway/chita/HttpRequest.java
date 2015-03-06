@@ -8,6 +8,32 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
+ * Used for builder style http request construction and sending different objects by
+ * POST/GET/PUT/DELETE method using sitebricks {@link ChitaTransport}
+ *
+ * <p/>
+ * Examples:
+ * <br>
+ *
+ * GET
+ * <pre>
+ *   HttpRequest request = httpRequest(new TargetUrl("http://abv.bg")).build();
+ * </pre>
+ *
+ * POST
+ * <pre>
+ *   // TargetUrl targetUrl = ...
+ *
+ *   HttpRequest request = httpRequest(targetUrl).post(person).as(GsonTransport.class).build();
+ * </pre>
+ *
+ * PUT
+ * <pre>
+ *   // TargetUrl targetUrl = ...
+ *
+ *   HttpRequest request = httpRequest(targetUrl).put(address).as(GsonTransport.class).build();
+ * </pre>
+ *
  * @author Mihail Lesikov (mlesikov@gmail.com)
  */
 public class HttpRequest<T>{

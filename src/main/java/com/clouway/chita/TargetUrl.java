@@ -11,7 +11,33 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Mihail Lesikov (mlesikov@gmail.com)
+ * Examples:
+ * <br>
+ * A simple url:
+ * <pre>
+ *   TargetUrl targetUrl = new TargetUrl("http://example.com/test/page");
+ *
+ *   // or with separated domain
+ *   TargetUrl targetUrl = new TargetUrl("http://example.com", "/test/address");
+ * </pre>
+ *
+ * Simple url with query string parameters:
+ * <pre>
+ *   TargetUrl targetUrl = new TargetUrl("http://example.com", "/test/address").addParameter("page", "23").addParameter("sort", "asc");
+ *
+ *   // result url string is "http://example.com/test/address?page=23&sort=asc"
+ * </pre>
+ *
+ * Url from parameterized template:
+ * <pre>
+ *   String urlDomain = "http://example.com"
+ *   String urlTemplateString = "/a/:valueA/b/:valueB/end";
+ *   TargetUrl targetUrl = TargetUrl.urlTemplate(urlDomain, urlTemplateString).setValue("valueA", "123").setValue("valueB", "678").build();
+ *
+ *   // result url string is "http://example.com/a/123/b/678/end
+ * </pre>
+ *
+ * @authors Mihail Lesikov (mlesikov@gmail.com), Stefan Dimitrov (stefan.dimitrov@clouway.com)
  */
 public class TargetUrl {
   private final String url;
