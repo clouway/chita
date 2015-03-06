@@ -51,6 +51,18 @@ public class HttpRequest<T>{
       return this;
     }
 
+    public Builder put(T entity) {
+      this.methodType = "PUT";
+      this.body = entity;
+      return this;
+    }
+
+    public Builder delete() {
+      this.methodType = "DELETE";
+      this.body = null;
+      return this;
+    }
+
     public Builder contentType(String contentType) {
       this.contentType = contentType;
       return this;
