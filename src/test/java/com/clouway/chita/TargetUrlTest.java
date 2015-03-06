@@ -31,7 +31,7 @@ public class TargetUrlTest {
   }
 
   @Test
-  public void urlWithParameters() throws Exception {
+  public void urlWithTemplateParameters() throws Exception {
     String urlTemplateString = "http://myTest/property/:value";
     TargetUrl targetUrl = TargetUrl.fromTemplate(urlTemplateString).setValue("value", "test").build();
 
@@ -41,7 +41,7 @@ public class TargetUrlTest {
   }
 
   @Test
-  public void urlWithParametersWithEndpointPrefix() throws Exception {
+  public void urlWithTemplateParametersWithEndpointPrefix() throws Exception {
     String urlEndpointPrefix = "http://myTest";
     String urlTemplateString = "/property/:value";
     TargetUrl targetUrl = TargetUrl.fromTemplate(urlEndpointPrefix, urlTemplateString).setValue("value", "test").build();
@@ -52,7 +52,7 @@ public class TargetUrlTest {
   }
 
   @Test
-  public void urlWithNotAllParametersSet() throws Exception {
+  public void urlWithNotAllTemplateParametersSet() throws Exception {
     String urlTemplateString = "http://myTest/a/:valueA/b/:valueB/end";
 
     TargetUrl targetUrl = null;
@@ -69,13 +69,35 @@ public class TargetUrlTest {
   }
 
   @Test
-  public void urlWithMoreThanAvailableParametersSet() throws Exception {
+  public void urlWithMoreThanAvailableTemplateParametersSet() throws Exception {
     String urlTemplateString = "http://myTest/a/:valueA/end";
     TargetUrl targetUrl = TargetUrl.fromTemplate(urlTemplateString).setValue("valueA", "123").setValue("valueB", "678").build();
 
     assertThat(targetUrl, is(notNullValue(TargetUrl.class)));
     assertThat(targetUrl.getValue().isPresent(), is(true));
     assertThat(targetUrl.getValue().get(), is("http://myTest/a/123/end"));
+  }
+
+  @Test
+  public void urlWithAQueryParameter() throws Exception {
+    String urlString = "http://myTest/page";
+    TargetUrl targetUrl = new TargetUrl(urlString).addParameter("param1", "value1");
+
+    assertThat(targetUrl, is(notNullValue(TargetUrl.class)));
+    assertThat(targetUrl.getValue().isPresent(), is(true));
+    assertThat(targetUrl.getValue().get(), is("http://myTest/page?param1=value1"));
+  }
+
+  @Test
+  public void urlWithManyQueryParameters() throws Exception {
+    String urlString = "http://myTest/page";
+    TargetUrl targetUrl = new TargetUrl(urlString)
+            .addParameter("paramA", "valueA")
+            .addParameter("paramB", "valueB");
+
+    assertThat(targetUrl, is(notNullValue(TargetUrl.class)));
+    assertThat(targetUrl.getValue().isPresent(), is(true));
+    assertThat(targetUrl.getValue().get(), is("http://myTest/page?paramA=valueA&paramB=valueB"));
   }
 
 }

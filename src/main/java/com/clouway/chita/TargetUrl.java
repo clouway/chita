@@ -3,7 +3,9 @@ package com.clouway.chita;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +16,8 @@ import java.util.regex.Pattern;
 public class TargetUrl {
   private final String url;
   private String suffix;
+  private List<String> queryParametersNames = new ArrayList<String>();
+  private List<String> queryParametersValues = new ArrayList<String>();
 
   public static Builder fromTemplate(String urlTemplate) {
     return new Builder(urlTemplate);
@@ -86,6 +90,13 @@ public class TargetUrl {
     this.url = url;
   }
 
+  public TargetUrl addParameter(String parameterName, String value) {
+    queryParametersNames.add(parameterName);
+    queryParametersValues.add(value);
+
+    return this;
+  }
+
   public Optional<String> getValue() {
 
     if (isAvailable()) {
@@ -94,7 +105,8 @@ public class TargetUrl {
       if (!Strings.isNullOrEmpty(suffix)) {
         value = value + suffix;
       }
-      return Optional.of(value);
+
+      return Optional.of(appendQueryParameters(value));
     }
 
     return Optional.absent();
@@ -102,5 +114,24 @@ public class TargetUrl {
 
   public boolean isAvailable() {
     return !Strings.isNullOrEmpty(url);
+  }
+
+  private String appendQueryParameters(String urlString) {
+
+    if (queryParametersNames.size() < 1) {
+      return urlString;
+    }
+
+    StringBuffer parametersString = new StringBuffer();
+
+    for (int i = 0; i < queryParametersNames.size(); i++) {
+      parametersString.append("&");
+      parametersString.append(String.format("%s=%s", queryParametersNames.get(i), queryParametersValues.get(i)));
+    }
+
+    // Delete first "&" from parameter sequence
+    parametersString.deleteCharAt(0);
+
+    return String.format("%s?%s", urlString, parametersString.toString());
   }
 }
