@@ -19,26 +19,26 @@ public class TargetUrl {
     return new Builder(urlTemplate);
   }
 
-  public static Builder fromTemplate(String endpointPrefix, String urlTemplate) {
-    return new Builder(endpointPrefix, urlTemplate);
+  public static Builder fromTemplate(String endpointDomain, String urlTemplate) {
+    return new Builder(endpointDomain, urlTemplate);
   }
 
   public static class Builder {
 
     private String urlTemplate;
-    private String endpointPrefix;
+    private String endpointDomain;
     private Map<String, String> parameterValues = new Hashtable<String, String>();
 
     public Builder(String urlTemplate) {
       this.urlTemplate = urlTemplate;
     }
 
-    public Builder(String endpointPrefix, String urlTemplate) {
-      this.endpointPrefix = endpointPrefix;
+    public Builder(String endpointDomain, String urlTemplate) {
+      this.endpointDomain = endpointDomain;
       this.urlTemplate = urlTemplate;
     }
 
-    public Builder set(String parameterName, String value) {
+    public Builder setValue(String parameterName, String value) {
       parameterValues.put(parameterName, value);
       return this;
     }
@@ -62,18 +62,18 @@ public class TargetUrl {
           urlString.append(parameterValues.get(tokenName));
 
         } else {
-          urlString.append(matcher.group(0));
+          throw new UrlTemplateNotResolvedError(String.format("Value for parameter %s was not set.", tokenName));
         }
         beginPosition = matcher.end();
       }
 
       urlString.append(urlTemplate.substring(beginPosition, urlTemplate.length()));
 
-      if (Strings.isNullOrEmpty(endpointPrefix)) {
+      if (Strings.isNullOrEmpty(endpointDomain)) {
         return new TargetUrl(urlString.toString());
       }
 
-      return new TargetUrl(endpointPrefix, urlString.toString());
+      return new TargetUrl(endpointDomain, urlString.toString());
     }
   }
 
