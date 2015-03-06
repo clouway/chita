@@ -19,11 +19,11 @@ public class TargetUrl {
   private List<String> queryParametersNames = new ArrayList<String>();
   private List<String> queryParametersValues = new ArrayList<String>();
 
-  public static Builder fromTemplate(String urlTemplate) {
+  public static Builder urlTemplate(String urlTemplate) {
     return new Builder(urlTemplate);
   }
 
-  public static Builder fromTemplate(String endpointDomain, String urlTemplate) {
+  public static Builder urlTemplate(String endpointDomain, String urlTemplate) {
     return new Builder(endpointDomain, urlTemplate);
   }
 
@@ -48,6 +48,10 @@ public class TargetUrl {
     }
 
     public TargetUrl build() {
+
+      if (Strings.isNullOrEmpty(urlTemplate)) {
+        return new TargetUrl(urlTemplate);
+      }
 
       Pattern parameterPattern = Pattern.compile("[:]([^/]+)");
       Matcher matcher = parameterPattern.matcher(urlTemplate);
