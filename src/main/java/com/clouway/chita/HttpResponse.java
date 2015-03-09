@@ -4,7 +4,6 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 
 /**
  * @author Mihail Lesikov (mlesikov@gmail.com)
@@ -22,27 +21,23 @@ public class HttpResponse {
     return new HttpResponse(0, "");
   }
 
-  private int code;
+  private final int code;
 
-  private  String message;
+  private final String statusMessage;
 
   private InputStream inputStream;
 
+  HttpResponse(int responseCode, String responseMessage, InputStream inputStream) {
 
-  HttpResponse(int code, String message) {
-
-    this.code = code;
-    this.message = message;
+    code = responseCode;
+    statusMessage = responseMessage;
+    this.inputStream = inputStream;
   }
 
-  HttpResponse(HttpURLConnection connection) {
+  HttpResponse(int code, String statusMessage) {
 
-    try {
-      this.code = connection.getResponseCode();
-      this.message = connection.getResponseMessage();
-      this.inputStream = connection.getInputStream();
-    } catch (IOException e) {
-    }
+    this.code = code;
+    this.statusMessage = statusMessage;
   }
 
   /**
@@ -57,7 +52,7 @@ public class HttpResponse {
    * successfully received, understood, and accepted.
    */
   public boolean isSuccessful() {
-    return code() == 200;
+    return code == 200;
   }
 
   /**
@@ -77,7 +72,7 @@ public class HttpResponse {
    * Returns the HTTP status message or null if it is unknown.
    */
   public String statusMessage() {
-    return message;
+    return statusMessage;
   }
 
   public <E> ResponseRead<E> read(final Class<E> entityClazz) {

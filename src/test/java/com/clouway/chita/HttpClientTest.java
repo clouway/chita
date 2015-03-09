@@ -81,7 +81,7 @@ public class HttpClientTest {
       root.addServlet(new ServletHolder(new HttpServlet() {
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-          resp.setStatus(errorCode);
+          resp.sendError(errorCode);
         }
       }), errorServiceUrl);
 
