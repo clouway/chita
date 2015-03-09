@@ -13,7 +13,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * @author Tsony Tsonev (tsony.tsonev@clouway.com)
  */
-public class CustomTransport implements ChitaTransport {
+public class CustomTransport implements Transport {
   @Override
   public <T> T in(InputStream in, Class<T> type) throws IOException {
     return new Gson().fromJson(new InputStreamReader(in), type);

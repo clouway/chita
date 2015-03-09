@@ -18,14 +18,14 @@ import static com.clouway.chita.HttpResponse.dummyResponse;
  * CHITA -  clouway http intelligent transport api
  *
  * Represent a wrapper of a {@link java.net.HttpURLConnection}. The main goal is to represent a builder style
- * http request construction and sending different objects by POST/GET/PUT/DELETE method using sitebricks {@link ChitaTransport}
+ * http request construction and sending different objects by POST/GET/PUT/DELETE method using Sitebricks-like {@link Transport}
  * <p/>
  * Example:
  * <p/>
  * GET
  * <pre>
  * HttpRequest request = httpRequest(new TargetUrl("abv.bg")).build();
- * ChitaHttp chitaClient = new ChitaHttpClient();// in most cases chitaClient should be injected
+ * HttpClient chitaClient = new HttpClient();// in most cases chitaClient should be injected
  * HttpResponse response = chitaClient.execute(request);
  * </pre>
  *
@@ -33,7 +33,7 @@ import static com.clouway.chita.HttpResponse.dummyResponse;
  * <pre>
  * TargetUrl targetUrl = new TargetUrl("http://telcong.com", "/test/address");
  * HttpRequest request = httpRequest(targetUrl).post(person).as(GsonTransport.class).build();
- * ChitaHttp chitaClient = new ChitaHttpClient();// in most cases chitaClient should be injected
+ * HttpClient chitaClient = new HttpClient();// in most cases chitaClient should be injected
  * HttpResponse response = chitaClient.execute(request);
  * </pre>
  *
@@ -42,17 +42,16 @@ import static com.clouway.chita.HttpResponse.dummyResponse;
  * Result reply = response.read(Result.class).as(GsonTransport.class);
  * </pre>
  *
- * here the response is using sitebricks {@link ChitaTransport} for
+ * here the response is using sitebricks {@link Transport} for
  * deserializing the result object
  *
  * @author Tsony Tsonev (tsony.tsonev@clouway.com)
  */
-public class ChitaHttpClient<T> implements ChitaHttp{
+public class HttpClient {
 
   private static final Logger log = Logger.getLogger(HttpRequest.class.getName());
 
-  @Override
-  public HttpResponse execute(HttpRequest request) {
+  public <T> HttpResponse execute(HttpRequest<T> request) {
     OutputStream out = null;
     InputStream inputStream = null;
 
@@ -79,7 +78,7 @@ public class ChitaHttpClient<T> implements ChitaHttp{
         Object body = request.getBody();
         if (request.getTransportClass() != null && body != null) {
 
-          ChitaTransport transport = (ChitaTransport) request.getTransportClass().newInstance();
+          Transport transport = request.getTransportClass().newInstance();
 
           conn.setRequestProperty("Content-Type", transport.contentType());
 

@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 /**
  * Used for builder style http request construction and sending different objects by
- * POST/GET/PUT/DELETE method using sitebricks {@link ChitaTransport}
+ * POST/GET/PUT/DELETE method using sitebricks {@link Transport}
  *
  * <p/>
  * Examples:
@@ -59,7 +59,7 @@ public class HttpRequest<T>{
 
     private int connectTimeout = 10000;
 
-    private Class<? extends ChitaTransport> transportClass;
+    private Class<? extends Transport> transportClass;
 
     public Builder(TargetUrl url) {
 
@@ -118,7 +118,7 @@ public class HttpRequest<T>{
       return r;
     }
 
-    public Builder as(Class<? extends ChitaTransport> transportClass) {
+    public Builder as(Class<? extends Transport> transportClass) {
       this.transportClass = transportClass;
       return this;
     }
@@ -159,7 +159,7 @@ public class HttpRequest<T>{
     return connectTimeout;
   }
 
-  public Class<? extends ChitaTransport> getTransportClass() {
+  public Class<? extends Transport> getTransportClass() {
     return transportClass;
   }
 
@@ -171,9 +171,9 @@ public class HttpRequest<T>{
     return properties;
   }
 
-  private Class<? extends ChitaTransport> transportClass = TextTransport.class;
+  private Class<? extends Transport> transportClass = TextTransport.class;
 
-  public HttpRequest<T> as(Class<? extends ChitaTransport> transportClass) {
+  public HttpRequest<T> as(Class<? extends Transport> transportClass) {
     this.transportClass = transportClass;
     return this;
   }

@@ -29,11 +29,11 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class ChitaHttpClientTest {
+public class HttpClientTest {
 
   private String serverUrl = "http://localhost:9999";
   private static String serviceUrl = "/r/provision/service";
-  private ChitaHttpClient httpClient = new ChitaHttpClient();
+  private HttpClient httpClient = new HttpClient();
 
   static class TestingServer {
     private Server server;
