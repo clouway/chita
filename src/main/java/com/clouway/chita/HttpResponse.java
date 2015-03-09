@@ -76,7 +76,7 @@ public class HttpResponse {
   /**
    * Returns the HTTP status message or null if it is unknown.
    */
-  public String message() {
+  public String statusMessage() {
     return message;
   }
 
