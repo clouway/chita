@@ -27,14 +27,14 @@ public class HttpResponse {
 
   private InputStream inputStream;
 
-  public HttpResponse(int responseCode, String responseMessage, InputStream inputStream) {
+  HttpResponse(int responseCode, String responseMessage, InputStream inputStream) {
 
     code = responseCode;
     message = responseMessage;
     this.inputStream = inputStream;
   }
 
-  public HttpResponse(int code, String message) {
+  HttpResponse(int code, String message) {
 
     this.code = code;
     this.message = message;

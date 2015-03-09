@@ -1,7 +1,7 @@
 # CHITA
 ####Clouway Http Intelligent Transport Api
 
-The library represent a wrapper of the java.net.HttpURLConnection class. The main goal is to represent a builder style for construction of http requests and sending different objects by POST/GET/PUT/DELETE method using sitebricks Transport.
+The library represent a wrapper of the java.net.HttpURLConnection class. The main goal is to represent a builder style for construction of http requests and sending different objects by POST/GET/PUT/DELETE method using Sitebricks-like Transport.
 
 Example:
 
@@ -44,7 +44,6 @@ Result reply = response.read(Result.class).as(GsonTransport.class);
 ...
 byte[] reply = response.readBytes();
 ```
-Here the response is using sitebricks Transport for deserializing the result object.
 
 
 ##### The api works successfully with http and https, also is fully compatible with the Google App Engine platform.

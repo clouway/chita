@@ -124,6 +124,9 @@ public class HttpRequest<T>{
     }
   }
 
+  private HttpRequest() {
+  }
+
   private TargetUrl url;
 
   private String methodType = "GET";
