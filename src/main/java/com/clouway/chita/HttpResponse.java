@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 
 /**
  * @author Mihail Lesikov (mlesikov@gmail.com)
@@ -21,23 +22,27 @@ public class HttpResponse {
     return new HttpResponse(0, "");
   }
 
-  private final int code;
+  private int code;
 
-  private final String message;
+  private  String message;
 
   private InputStream inputStream;
 
-  HttpResponse(int responseCode, String responseMessage, InputStream inputStream) {
-
-    code = responseCode;
-    message = responseMessage;
-    this.inputStream = inputStream;
-  }
 
   HttpResponse(int code, String message) {
 
     this.code = code;
     this.message = message;
+  }
+
+  HttpResponse(HttpURLConnection connection) {
+
+    try {
+      this.code = connection.getResponseCode();
+      this.message = connection.getResponseMessage();
+      this.inputStream = connection.getInputStream();
+    } catch (IOException e) {
+    }
   }
 
   /**
@@ -52,7 +57,7 @@ public class HttpResponse {
    * successfully received, understood, and accepted.
    */
   public boolean isSuccessful() {
-    return code == 200;
+    return code() == 200;
   }
 
   /**

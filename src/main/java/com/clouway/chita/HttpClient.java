@@ -94,13 +94,7 @@ public class HttpClient {
 
         }
 
-        try {
-          inputStream = conn.getInputStream();
-        } catch (IOException e) {
-          inputStream = conn.getErrorStream();
-        }
-
-        return new HttpResponse(conn.getResponseCode(), conn.getResponseMessage(), inputStream);
+        return new HttpResponse(conn);
 
       } catch (ProtocolException e) {
         e.printStackTrace();
