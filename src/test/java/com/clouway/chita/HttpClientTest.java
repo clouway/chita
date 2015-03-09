@@ -34,6 +34,8 @@ public class HttpClientTest {
   private String serverUrl = "http://localhost:9999";
   private static String serviceUrl = "/r/provision/service";
   private HttpClient httpClient = new HttpClient();
+  private static String errorServiceUrl = "/r/access";
+  private static int errorCode = 400;
 
   static class TestingServer {
     private Server server;
@@ -74,6 +76,14 @@ public class HttpClientTest {
           receivedGETRequest = true;
         }
       }), serviceUrl);
+
+      // Error servlet
+      root.addServlet(new ServletHolder(new HttpServlet() {
+        @Override
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+          resp.setStatus(errorCode);
+        }
+      }), errorServiceUrl);
 
 
     }
@@ -259,6 +269,16 @@ public class HttpClientTest {
 
   private ArrayList<DummyService> services(DummyService... dummyService) {
     return Lists.newArrayList(dummyService);
+  }
+
+  @Test
+  public void serverReturnsBadRequestError() throws Exception {
+    errorCode = 400;
+    HttpRequest request = httpRequest(new TargetUrl(serverUrl, errorServiceUrl)).build();
+
+    HttpResponse response = httpClient.execute(request);
+
+    assertThat(response.code(), is(errorCode));
   }
 
 }
