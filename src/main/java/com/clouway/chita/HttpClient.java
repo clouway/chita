@@ -94,10 +94,11 @@ public class HttpClient {
 
         }
 
-        try {
-          inputStream = conn.getInputStream();
-        } catch (IOException e) {
+        if (conn.getErrorStream() != null || conn.getResponseCode() >= 400) {
           inputStream = conn.getErrorStream();
+
+        } else {
+          inputStream = conn.getInputStream();
         }
 
         return new HttpResponse(conn.getResponseCode(), conn.getResponseMessage(), inputStream);
