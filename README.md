@@ -1,6 +1,8 @@
 # CHITA
 ####Clouway Http Intelligent Transport Api
 
+[![Join the chat at https://gitter.im/clouway/chita](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/clouway/chita?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 The library represent a wrapper of the java.net.HttpURLConnection class. The main goal is to represent a builder style for construction of http requests and sending different objects by POST/GET/PUT/DELETE method using Sitebricks-like Transport.
 
 Example:
