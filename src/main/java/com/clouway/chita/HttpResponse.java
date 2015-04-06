@@ -1,5 +1,6 @@
 package com.clouway.chita;
 
+import com.google.inject.TypeLiteral;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -94,6 +95,28 @@ public class HttpResponse {
       }
     };
   }
+
+
+  public <E> ResponseRead<E> read(final TypeLiteral<E> entityClazz) {
+    return new ResponseRead<E>() {
+      @Override
+      public E as(Class<? extends Transport> clazz) {
+        E result = null;
+        try {
+          Transport transport = clazz.newInstance();
+          result = transport.in(inputStream, entityClazz);
+        } catch (InstantiationException e) {
+          e.printStackTrace();
+        } catch (IllegalAccessException e) {
+          e.printStackTrace();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        return result;
+      }
+    };
+  }
+
 
   /**
    * Returns the response as byte array

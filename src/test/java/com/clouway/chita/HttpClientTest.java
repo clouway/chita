@@ -2,6 +2,7 @@ package com.clouway.chita;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
+import com.google.inject.TypeLiteral;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,10 +21,12 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.clouway.chita.HttpRequest.httpRequest;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNull;
@@ -232,6 +235,26 @@ public class HttpClientTest {
   }
 
   @Test
+  public void fetchGenericType() {
+    HttpRequest request = httpRequest(new TargetUrl(serverUrl, serviceUrl)).post(Lists.newArrayList()).as(CustomTransport.class).build();
+    HttpResponse response = httpClient.execute(request);
+
+    List<String> result = response.read(new TypeLiteral<List<String>>() {}).as(CustomTransport.class);
+    assertThat(result.size(), is(0));
+  }
+
+  @Test
+  public void fetchAnotherGenericType() {
+    HttpRequest request = httpRequest(new TargetUrl(serverUrl, serviceUrl)).post(Lists.newArrayList("test1", "test2")).as(CustomTransport.class).build();
+    HttpResponse response = httpClient.execute(request);
+
+    List<String> result = response.read(new TypeLiteral<List<String>>() {}).as(CustomTransport.class);
+
+    assertThat(result.size(), is(2));
+    assertThat(result, contains("test1", "test2"));
+  }
+
+  @Test
   public void providedRequestParameters() throws Exception {
     HttpRequest request = httpRequest(new TargetUrl(serverUrl, serviceUrl))
             .addProperty("Referer", "/localhost")
@@ -267,10 +290,6 @@ public class HttpClientTest {
     assertThat(server.getRequestHeaders().get("Authorization").startsWith("Basic"), is(true));
   }
 
-  private ArrayList<DummyService> services(DummyService... dummyService) {
-    return Lists.newArrayList(dummyService);
-  }
-
   @Test
   public void serverReturnsBadRequestError() throws Exception {
     errorCode = 400;
@@ -279,6 +298,10 @@ public class HttpClientTest {
     HttpResponse response = httpClient.execute(request);
 
     assertThat(response.code(), is(errorCode));
+  }
+
+  private ArrayList<DummyService> services(DummyService... dummyService) {
+    return Lists.newArrayList(dummyService);
   }
 
 }

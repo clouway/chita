@@ -41,8 +41,8 @@ public class HttpRequest<T>{
   private static final Logger log = Logger.getLogger(HttpRequest.class.getName());
 
 
-  public static Builder httpRequest(TargetUrl url) {
-    return new Builder(url);
+  public static <T> Builder<T> httpRequest(TargetUrl url) {
+    return new Builder<T>(url);
   }
 
   public static class Builder<T> {

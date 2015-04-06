@@ -1,5 +1,6 @@
 package com.clouway.chita;
 
+import com.google.inject.TypeLiteral;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -15,6 +16,11 @@ public class TextTransport implements Transport {
   @Override
   public <T> T in(InputStream in, Class<T> type) throws IOException {
     return type.cast(IOUtils.toString(in));
+  }
+
+  @Override
+  public <T> T in(InputStream in, TypeLiteral<T> type) throws IOException {
+    return (T)IOUtils.toString(in);
   }
 
   @Override

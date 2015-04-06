@@ -2,6 +2,7 @@ package com.clouway.chita;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
+import com.google.inject.TypeLiteral;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -14,9 +15,15 @@ import java.io.UnsupportedEncodingException;
  * @author Tsony Tsonev (tsony.tsonev@clouway.com)
  */
 public class CustomTransport implements Transport {
+
   @Override
   public <T> T in(InputStream in, Class<T> type) throws IOException {
     return new Gson().fromJson(new InputStreamReader(in), type);
+  }
+
+  @Override
+  public <T> T in(InputStream in, TypeLiteral<T> type) throws IOException {
+    return new Gson().fromJson(new InputStreamReader(in), type.getType());
   }
 
   @Override
