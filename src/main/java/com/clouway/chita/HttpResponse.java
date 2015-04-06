@@ -85,11 +85,11 @@ public class HttpResponse {
           Transport transport = clazz.newInstance();
           result = transport.in(inputStream, entityClazz);
         } catch (InstantiationException e) {
-          e.printStackTrace();
+          throw new IllegalStateException(e);
         } catch (IllegalAccessException e) {
-          e.printStackTrace();
+          throw new IllegalStateException(e);
         } catch (IOException e) {
-          e.printStackTrace();
+          throw new IllegalStateException(e);
         }
         return result;
       }
@@ -106,11 +106,12 @@ public class HttpResponse {
           Transport transport = clazz.newInstance();
           result = transport.in(inputStream, entityClazz);
         } catch (InstantiationException e) {
-          e.printStackTrace();
+          throw new IllegalStateException(e);
         } catch (IllegalAccessException e) {
-          e.printStackTrace();
+          throw new IllegalStateException(e);
         } catch (IOException e) {
-          e.printStackTrace();
+          // stream was already read?
+          throw new IllegalStateException(e);
         }
         return result;
       }
@@ -121,7 +122,7 @@ public class HttpResponse {
   /**
    * Returns the response as byte array
    */
-  public byte[] readBytes(){
+  public byte[] readBytes() {
     try {
       return IOUtils.toByteArray(inputStream);
     } catch (IOException e) {
