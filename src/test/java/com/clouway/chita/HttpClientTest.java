@@ -280,6 +280,15 @@ public class HttpClientTest {
   }
 
   @Test
+   public void fetchResponseContent() throws Exception {
+     Integer data = 654321;
+     HttpRequest request = httpRequest(new TargetUrl(serverUrl, serviceUrl)).post(data).as(CustomTransport.class).build();
+     HttpResponse response = httpClient.execute(request);
+
+     assertThat(response.content(), is(equalTo("654321")));
+   }
+
+  @Test
   public void useBasicAuthorization() throws Exception {
     HttpRequest request = httpRequest(new TargetUrl(serverUrl, serviceUrl))
             .basicAuthorization("John","pass123")
