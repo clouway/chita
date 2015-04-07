@@ -79,7 +79,7 @@ public class TargetUrl {
         return new TargetUrl(urlTemplate);
       }
 
-      Pattern parameterPattern = Pattern.compile("[:]([^/]+)");
+      Pattern parameterPattern = Pattern.compile("(?<=[/])[:]([a-zA-Z][^/]*)");
       Matcher matcher = parameterPattern.matcher(urlTemplate);
 
       StringBuffer urlString = new StringBuffer();

@@ -94,6 +94,24 @@ public class TargetUrlTest {
   }
 
   @Test
+  public void urlWithExplicitPort() throws Exception {
+    TargetUrl targetUrl = TargetUrl.urlTemplate("http://myTest:8080/a/:valueA/end").setValue("valueA", "12345").build();
+
+    assertThat(targetUrl, is(notNullValue(TargetUrl.class)));
+    assertThat(targetUrl.getValue().isPresent(), is(true));
+    assertThat(targetUrl.getValue().get(), is("http://myTest:8080/a/12345/end"));
+  }
+
+  @Test
+  public void urlWithColons() throws Exception {
+    TargetUrl targetUrl = TargetUrl.urlTemplate("http://myTest/a/mac/f4:45:a8:12:56/:valueA/end").setValue("valueA", "12345").build();
+
+    assertThat(targetUrl, is(notNullValue(TargetUrl.class)));
+    assertThat(targetUrl.getValue().isPresent(), is(true));
+    assertThat(targetUrl.getValue().get(), is("http://myTest/a/mac/f4:45:a8:12:56/12345/end"));
+  }
+
+  @Test
   public void urlWithAQueryParameter() throws Exception {
     String urlString = "http://myTest/page";
     TargetUrl targetUrl = new TargetUrl(urlString).addParameter("param1", "value1");
