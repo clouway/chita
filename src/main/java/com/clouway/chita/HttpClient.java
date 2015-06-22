@@ -66,7 +66,6 @@ public class HttpClient {
         conn.setRequestMethod(request.getMethodType());
         conn.setConnectTimeout(request.getConnectTimeout());
         conn.setReadTimeout(request.getReadTimeout());
-        conn.setRequestProperty("Cache-Control", "max-age=1");//will not cache requests by default
         conn.setDoOutput(true);
 
         //if properties are added to the request

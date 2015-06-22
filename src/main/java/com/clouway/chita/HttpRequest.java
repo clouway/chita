@@ -113,6 +113,16 @@ public class HttpRequest<T>{
       return this;
     }
 
+    /**
+     * Sets the max age for the request to be cached (the lower the age is the chance the response was cached is lower too)
+     * @param seconds
+     * @return
+     */
+    public Builder cacheControl(int seconds){
+      this.properties.put("Cache-Control", "max-age=" + seconds);
+      return this;
+    }
+
     public HttpRequest build() {
       HttpRequest r = new HttpRequest();
       r.connectTimeout = connectTimeout;

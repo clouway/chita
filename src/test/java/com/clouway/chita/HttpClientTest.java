@@ -98,6 +98,14 @@ public class HttpClientTest {
             }
           }
 
+          requestHeaders = new HashMap<String, String>();
+          Enumeration headerNames = req.getHeaderNames();
+          while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = req.getHeader(key);
+            requestHeaders.put(key, value);
+          }
+
           receivedGETRequest = true;
         }
       }), serviceUrl);
@@ -124,6 +132,11 @@ public class HttpClientTest {
     public void stop() {
       try {
         server.stop();
+        lastReceivedRequest = null;
+        lastReceivedContentType = null;
+        receivedGETRequest = false;
+        requestHeaders = null;
+        sleepTime = null;
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
@@ -339,6 +352,7 @@ public class HttpClientTest {
   public void setNoCachingHeaderForAllRequests() throws Exception {
     HttpRequest post = httpRequest(new TargetUrl(serverUrl, serviceUrl))
             .post("")
+            .cacheControl(1)
             .build();
 
     httpClient.execute(post);
@@ -346,11 +360,12 @@ public class HttpClientTest {
     assertThat(server.getRequestHeaders().get("Cache-Control").equals("max-age=1"), is(true));
 
     HttpRequest get = httpRequest(new TargetUrl(serverUrl, serviceUrl))
+            .cacheControl(2)
             .build();
 
     httpClient.execute(get);
 
-    assertThat(server.getRequestHeaders().get("Cache-Control").equals("max-age=1"), is(true));
+    assertThat(server.getRequestHeaders().get("Cache-Control").equals("max-age=2"), is(true));
   }
 
   @Test
