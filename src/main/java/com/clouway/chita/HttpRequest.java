@@ -59,6 +59,8 @@ public class HttpRequest<T>{
 
     private int connectTimeout = 10000;
 
+    private int readTimeout = 10000;
+
     private Class<? extends Transport> transportClass;
 
     public Builder(TargetUrl url) {
@@ -68,6 +70,11 @@ public class HttpRequest<T>{
 
     public Builder connectTimeout(int seconds) {
       connectTimeout = seconds * 1000;
+      return this;
+    }
+
+    public Builder readTimeout(int seconds) {
+      readTimeout = seconds * 1000;
       return this;
     }
 
@@ -109,6 +116,7 @@ public class HttpRequest<T>{
     public HttpRequest build() {
       HttpRequest r = new HttpRequest();
       r.connectTimeout = connectTimeout;
+      r.readTimeout = readTimeout;
       r.body = body;
       r.url = url;
       r.methodType = methodType;
@@ -137,6 +145,8 @@ public class HttpRequest<T>{
 
   private int connectTimeout = 10000;
 
+  private int readTimeout = 10000;
+
   private T body;
 
   public TargetUrl getUrl() {
@@ -157,6 +167,10 @@ public class HttpRequest<T>{
 
   public int getConnectTimeout() {
     return connectTimeout;
+  }
+
+  public int getReadTimeout() {
+    return readTimeout;
   }
 
   public Class<? extends Transport> getTransportClass() {

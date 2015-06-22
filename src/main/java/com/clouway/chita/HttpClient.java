@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -54,15 +55,18 @@ public class HttpClient {
   public <T> HttpResponse execute(HttpRequest<T> request) {
     OutputStream out = null;
     InputStream inputStream = null;
+    HttpURLConnection conn = null;
 
     if (request.getUrl().isAvailable()) {
 
       try {
         log.info("url: " + request.getUrl().getValue().get());
         String url = request.getUrl().getValue().get();
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setRequestMethod(request.getMethodType());
         conn.setConnectTimeout(request.getConnectTimeout());
+        conn.setReadTimeout(request.getReadTimeout());
+        conn.setRequestProperty("Cache-Control", "max-age=1");//will not cache requests by default
         conn.setDoOutput(true);
 
         //if properties are added to the request
@@ -96,13 +100,21 @@ public class HttpClient {
 
         if (conn.getErrorStream() != null || conn.getResponseCode() >= 400) {
           inputStream = conn.getErrorStream();
-
         } else {
           inputStream = conn.getInputStream();
         }
 
         return new HttpResponse(conn.getResponseCode(), conn.getResponseMessage(), inputStream);
 
+      } catch (SocketTimeoutException e) {
+        try {
+          if (conn != null) {
+            return new HttpResponse(408, conn.getResponseMessage());
+          }
+        } catch (IOException e1) {
+          e1.printStackTrace();
+        }
+        return new HttpResponse(408, e.getMessage());
       } catch (ProtocolException e) {
         e.printStackTrace();
       } catch (UnsupportedEncodingException e) {

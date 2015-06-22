@@ -29,6 +29,8 @@ public class HttpResponse {
 
   private InputStream inputStream;
 
+  private byte[] responseBytes;
+
   HttpResponse(int responseCode, String responseMessage, InputStream inputStream) {
 
     code = responseCode;
@@ -40,6 +42,7 @@ public class HttpResponse {
 
     this.code = code;
     this.statusMessage = statusMessage;
+    this.inputStream = IOUtils.toInputStream("");
   }
 
   /**
@@ -132,11 +135,20 @@ public class HttpResponse {
    * Returns the response as byte array
    */
   public byte[] readBytes() {
+    if (responseBytes != null) {
+      return responseBytes;
+    }
+
     try {
-      return IOUtils.toByteArray(inputStream);
+      responseBytes = IOUtils.toByteArray(inputStream);
+      return responseBytes;
     } catch (IOException e) {
       e.printStackTrace();
     }
     return null;
+  }
+
+  public boolean isTimedOut() {
+    return code == 408;
   }
 }

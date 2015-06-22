@@ -3,6 +3,7 @@ package com.clouway.chita;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.inject.TypeLiteral;
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.clouway.chita.HttpRequest.httpRequest;
+import static java.lang.Thread.sleep;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
@@ -48,6 +51,8 @@ public class HttpClientTest {
     private boolean receivedGETRequest;
     private Map<String, String> requestHeaders;
 
+    private Long sleepTime;
+
     public TestingServer(int port) {
 
       server = new Server(port);
@@ -58,6 +63,15 @@ public class HttpClientTest {
       root.addServlet(new ServletHolder(new HttpServlet() {
         @Override
         protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+          if (sleepTime != null) {
+            try {
+              sleep(sleepTime);
+              throw new SocketTimeoutException();
+            } catch (InterruptedException e) {
+            }
+          }
+
           lastReceivedRequest = new String(ByteStreams.toByteArray(req.getInputStream()));
           lastReceivedContentType = req.getContentType();
           requestHeaders = new HashMap<String, String>();
@@ -76,6 +90,14 @@ public class HttpClientTest {
 
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+          if (sleepTime != null) {
+            try {
+              sleep(sleepTime);
+              throw new SocketTimeoutException();
+            } catch (InterruptedException e) {
+            }
+          }
+
           receivedGETRequest = true;
         }
       }), serviceUrl);
@@ -105,6 +127,10 @@ public class HttpClientTest {
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
+    }
+
+    public void sleepFor(long mills) {
+      sleepTime = mills;
     }
 
     public void hasReceivedGetRequest() {
@@ -307,6 +333,47 @@ public class HttpClientTest {
     HttpResponse response = httpClient.execute(request);
 
     assertThat(response.code(), is(errorCode));
+  }
+
+  @Test
+  public void setNoCachingHeaderForAllRequests() throws Exception {
+    HttpRequest post = httpRequest(new TargetUrl(serverUrl, serviceUrl))
+            .post("")
+            .build();
+
+    httpClient.execute(post);
+
+    assertThat(server.getRequestHeaders().get("Cache-Control").equals("max-age=1"), is(true));
+
+    HttpRequest get = httpRequest(new TargetUrl(serverUrl, serviceUrl))
+            .build();
+
+    httpClient.execute(get);
+
+    assertThat(server.getRequestHeaders().get("Cache-Control").equals("max-age=1"), is(true));
+  }
+
+  @Test
+  public void cacheReadingOfResponse() throws Exception {
+    HttpResponse response = new HttpResponse(200, "OK", IOUtils.toInputStream("response body"));
+    byte[] bytes1 = response.readBytes();
+    byte[] bytes2 = response.readBytes();
+
+    assertThat(bytes1, is(bytes2));
+  }
+
+  @Test
+  public void readingRequestTimeout() throws Exception {
+    HttpRequest post = httpRequest(new TargetUrl(serverUrl, serviceUrl))
+            .post("")
+            .readTimeout(1)
+            .build();
+
+    server.sleepFor(2000);
+    HttpResponse response = httpClient.execute(post);
+
+    assertThat(response.code(), is(408));
+    assertThat(response.isTimedOut(), is(true));
   }
 
   private ArrayList<DummyService> services(DummyService... dummyService) {
