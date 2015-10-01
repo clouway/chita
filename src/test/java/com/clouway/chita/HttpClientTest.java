@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.inject.TypeLiteral;
 import org.apache.commons.io.IOUtils;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,11 +30,11 @@ import java.util.Map;
 import static com.clouway.chita.HttpRequest.httpRequest;
 import static java.lang.Thread.sleep;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class HttpClientTest {
 
@@ -181,7 +182,7 @@ public class HttpClientTest {
   }
 
   @Test
-  public void provisionSingleService() {
+  public void provisionSingleService() throws IOException {
     HttpRequest request = httpRequest(new TargetUrl(serverUrl, serviceUrl)).post(services(
             new DummyService("1", "test@test.com", "ACTIVE"))).as(CustomTransport.class).build();
     HttpResponse response = httpClient.execute(request);
@@ -198,14 +199,17 @@ public class HttpClientTest {
   public void theHostsIsDown() {
     HttpRequest request = httpRequest(new TargetUrl("http://localhost:1919")).post(services(
             new DummyService("1", "test@test.com", "ACTIVE"))).as(CustomTransport.class).build();
-    HttpResponse response = httpClient.execute(request);
-
-    assertThat(response.isSuccessful(), is(equalTo(false)));
-    assertThat(response.code(), is(equalTo(-1)));
+    HttpResponse response = null;
+    try {
+      response = httpClient.execute(request);
+      fail("communication failure was not reported as IOException?");
+    } catch (IOException e) {
+      assertThat(response, is(nullValue()));
+    }
   }
 
   @Test
-  public void whenEmptyUrl() {
+  public void whenEmptyUrl() throws IOException {
     HttpRequest request = httpRequest(new TargetUrl("")).post(services(
             new DummyService("1", "test@test.com", "ACTIVE"))).as(CustomTransport.class).build();
     HttpResponse response = httpClient.execute(request);
@@ -222,7 +226,7 @@ public class HttpClientTest {
   }
 
   @Test
-  public void whenEmptyUrlWithSuffix() {
+  public void whenEmptyUrlWithSuffix() throws IOException {
     HttpRequest request = httpRequest(new TargetUrl("", "suffix")).post(services(
             new DummyService("1", "test@test.com", "ACTIVE"))).as(CustomTransport.class).build();
     httpClient.execute(request);
@@ -236,7 +240,7 @@ public class HttpClientTest {
 
 
   @Test
-  public void sendMultipleServices() {
+  public void sendMultipleServices() throws IOException {
     ArrayList<DummyService> services = services(
             new DummyService("1", "firstService", "ACTIVE"),
             new DummyService("2", "secondService", "ACTIVE")
@@ -274,20 +278,22 @@ public class HttpClientTest {
   }
 
   @Test
-  public void fetchGenericType() {
+  public void fetchGenericType() throws IOException {
     HttpRequest request = httpRequest(new TargetUrl(serverUrl, serviceUrl)).post(Lists.newArrayList()).as(CustomTransport.class).build();
     HttpResponse response = httpClient.execute(request);
 
-    List<String> result = response.read(new TypeLiteral<List<String>>() {}).as(CustomTransport.class);
+    List<String> result = response.read(new TypeLiteral<List<String>>() {
+    }).as(CustomTransport.class);
     assertThat(result.size(), is(0));
   }
 
   @Test
-  public void fetchAnotherGenericType() {
+  public void fetchAnotherGenericType() throws IOException {
     HttpRequest request = httpRequest(new TargetUrl(serverUrl, serviceUrl)).post(Lists.newArrayList("test1", "test2")).as(CustomTransport.class).build();
     HttpResponse response = httpClient.execute(request);
 
-    List<String> result = response.read(new TypeLiteral<List<String>>() {}).as(CustomTransport.class);
+    List<String> result = response.read(new TypeLiteral<List<String>>() {
+    }).as(CustomTransport.class);
 
     assertThat(result.size(), is(2));
     assertThat(result, contains("test1", "test2"));
@@ -319,18 +325,18 @@ public class HttpClientTest {
   }
 
   @Test
-   public void fetchResponseContent() throws Exception {
-     Integer data = 654321;
-     HttpRequest request = httpRequest(new TargetUrl(serverUrl, serviceUrl)).post(data).as(CustomTransport.class).build();
-     HttpResponse response = httpClient.execute(request);
+  public void fetchResponseContent() throws Exception {
+    Integer data = 654321;
+    HttpRequest request = httpRequest(new TargetUrl(serverUrl, serviceUrl)).post(data).as(CustomTransport.class).build();
+    HttpResponse response = httpClient.execute(request);
 
-     assertThat(response.content(), is(equalTo("654321")));
-   }
+    assertThat(response.content(), is(equalTo("654321")));
+  }
 
   @Test
   public void useBasicAuthorization() throws Exception {
     HttpRequest request = httpRequest(new TargetUrl(serverUrl, serviceUrl))
-            .basicAuthorization("John","pass123")
+            .basicAuthorization("John", "pass123")
             .post("")
             .build();
     httpClient.execute(request);
@@ -378,17 +384,20 @@ public class HttpClientTest {
   }
 
   @Test
-  public void readingRequestTimeout() throws Exception {
+  public void readingRequestTimeout() {
     HttpRequest post = httpRequest(new TargetUrl(serverUrl, serviceUrl))
             .post("")
             .readTimeout(1)
             .build();
 
     server.sleepFor(2000);
-    HttpResponse response = httpClient.execute(post);
-
-    assertThat(response.code(), is(408));
-    assertThat(response.isTimedOut(), is(true));
+    HttpResponse response = null;
+    try {
+      response = httpClient.execute(post);
+      fail("IOException was not thrown when connection timeouts ? ");
+    } catch (IOException e) {
+      assertThat(response, is(nullValue()));
+    }
   }
 
   private ArrayList<DummyService> services(DummyService... dummyService) {

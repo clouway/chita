@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -17,7 +16,7 @@ import static com.clouway.chita.HttpResponse.dummyResponse;
 
 /**
  * CHITA -  clouway http intelligent transport api
- *
+ * <p/>
  * Represent a wrapper of a {@link java.net.HttpURLConnection}. The main goal is to represent a builder style
  * http request construction and sending different objects by POST/GET/PUT/DELETE method using Sitebricks-like {@link Transport}
  * <p/>
@@ -29,7 +28,7 @@ import static com.clouway.chita.HttpResponse.dummyResponse;
  * HttpClient chitaClient = new HttpClient();// in most cases chitaClient should be injected
  * HttpResponse response = chitaClient.execute(request);
  * </pre>
- *
+ * <p/>
  * POST
  * <pre>
  * TargetUrl targetUrl = new TargetUrl("http://telcong.com", "/test/address");
@@ -37,12 +36,12 @@ import static com.clouway.chita.HttpResponse.dummyResponse;
  * HttpClient chitaClient = new HttpClient();// in most cases chitaClient should be injected
  * HttpResponse response = chitaClient.execute(request);
  * </pre>
- *
+ * <p/>
  * also there is a way to read an object from the response
  * <pre>
  * Result reply = response.read(Result.class).as(GsonTransport.class);
  * </pre>
- *
+ * <p/>
  * here the response is using sitebricks {@link Transport} for
  * deserializing the result object
  *
@@ -52,7 +51,19 @@ public class HttpClient {
 
   private static final Logger log = Logger.getLogger(HttpRequest.class.getName());
 
-  public <T> HttpResponse execute(HttpRequest<T> request) {
+  /**
+   * Executes request immediately and blocks untill the request is finished.
+   *
+   * @param request the request to be executed
+   * @param <T>     the type of the request
+   * @return
+   * @throws IOException if the request could not be executed due to
+   *                     connectivity problem or timeout. Because networks can
+   *                     fail during an exchange, it is possible that the remote server
+   *                     accepted the request before the failure.
+   */
+  @SuppressWarnings("unchecked")
+  public <T> HttpResponse execute(HttpRequest<T> request) throws IOException {
     OutputStream out = null;
     InputStream inputStream = null;
     HttpURLConnection conn = null;
@@ -70,12 +81,11 @@ public class HttpClient {
 
         //if properties are added to the request
         Map<String, String> requestProperties = request.getProperties();
-        if(!requestProperties.isEmpty()){
-          for(String key : requestProperties.keySet()){
+        if (!requestProperties.isEmpty()) {
+          for (String key : requestProperties.keySet()) {
             conn.setRequestProperty(key, requestProperties.get(key));
           }
         }
-
 
         //if no transport or no body
         Object body = request.getBody();
@@ -105,23 +115,12 @@ public class HttpClient {
 
         return new HttpResponse(conn.getResponseCode(), conn.getResponseMessage(), inputStream);
 
-      } catch (SocketTimeoutException e) {
-        try {
-          if (conn != null) {
-            return new HttpResponse(408, conn.getResponseMessage());
-          }
-        } catch (IOException e1) {
-          e1.printStackTrace();
-        }
-        return new HttpResponse(408, e.getMessage());
       } catch (ProtocolException e) {
         e.printStackTrace();
       } catch (UnsupportedEncodingException e) {
         e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace();
       } catch (InstantiationException e) {
-        e.printStackTrace();
+        throw new IllegalArgumentException("The provided transport: " + request.getTransportClass() + " cannot be instantiated.");
       } catch (IllegalAccessException e) {
         e.printStackTrace();
       } finally {
