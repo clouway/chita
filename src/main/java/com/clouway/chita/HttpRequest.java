@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import org.apache.commons.codec.binary.Base64;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -34,12 +35,13 @@ import java.util.logging.Logger;
  *   HttpRequest request = httpRequest(targetUrl).put(address).as(GsonTransport.class).build();
  * </pre>
  *
+ * <p/>
+ * This class maintains the order of the header fields within the HTTP message, so the developers are able
+ * to specify correct header order depending of the situation.
+ *
  * @author Mihail Lesikov (mlesikov@gmail.com)
  */
 public class HttpRequest<T>{
-
-  private static final Logger log = Logger.getLogger(HttpRequest.class.getName());
-
 
   public static <T> Builder<T> httpRequest(TargetUrl url) {
     return new Builder<T>(url);
@@ -55,7 +57,7 @@ public class HttpRequest<T>{
 
     private String contentType;
 
-    private Map<String, String> properties = new HashMap<String, String>();
+    private Map<String, String> properties = new LinkedHashMap<String, String>();
 
     private int connectTimeout = 10000;
 
