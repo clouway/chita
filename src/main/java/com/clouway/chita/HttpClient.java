@@ -1,5 +1,6 @@
 package com.clouway.chita;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 
 import java.io.IOException;
@@ -105,6 +106,12 @@ public class HttpClient {
 
           conn.setRequestProperty("Content-Type", request.getContentType());
 
+        } else if (body instanceof String) {
+          out = conn.getOutputStream();
+
+          String stringBody = (String) body;
+          out.write(stringBody.getBytes(Charsets.UTF_8));
+          out.flush();
         }
 
         if (conn.getErrorStream() != null || conn.getResponseCode() >= 400) {
