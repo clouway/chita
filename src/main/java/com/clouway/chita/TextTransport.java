@@ -1,6 +1,8 @@
 package com.clouway.chita;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import com.google.inject.TypeLiteral;
 
@@ -22,7 +24,9 @@ public class TextTransport implements Transport {
 
   @Override
   public <T> T in(InputStream in, TypeLiteral<T> type) throws IOException {
-    return (T) CharStreams.toString(new InputStreamReader(in, Charsets.UTF_8));
+    ByteSource source = ByteSource.wrap(ByteStreams.toByteArray(in));
+    String text = source.asCharSource(Charsets.UTF_8).read();
+    return (T) text;
   }
 
   @Override

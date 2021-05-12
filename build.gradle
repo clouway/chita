@@ -21,9 +21,9 @@ repositories {
 }
 
 dependencies {
-  compile group: 'com.google.inject', name: 'guice', version: '3.0'
-  compile group: 'javax.inject', name: 'javax.inject'
-  compile group: 'com.google.guava', name: 'guava', version: '16.0'
+  compile "com.google.inject:guice:3.0"
+  compile "javax.inject:javax.inject"
+  compile "com.google.guava:guava:27.1-jre"
 
   testCompile group: 'junit', name: 'junit', version: '4.11'
   testCompile group: 'org.jmock', name: 'jmock', version: '2.6.0'
