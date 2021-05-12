@@ -3,7 +3,6 @@ package com.clouway.chita;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.inject.TypeLiteral;
-import org.apache.commons.io.IOUtils;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
@@ -17,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -376,7 +376,7 @@ public class HttpClientTest {
 
   @Test
   public void cacheReadingOfResponse() throws Exception {
-    HttpResponse response = new HttpResponse(200, "OK", IOUtils.toInputStream("response body"));
+    HttpResponse response = new HttpResponse(200, "OK", new ByteArrayInputStream("response body".getBytes()));
     byte[] bytes1 = response.readBytes();
     byte[] bytes2 = response.readBytes();
 

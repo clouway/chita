@@ -1,7 +1,7 @@
 package com.clouway.chita;
 
 import com.google.common.base.Strings;
-import org.apache.commons.codec.binary.Base64;
+import com.google.common.io.BaseEncoding;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -110,8 +110,8 @@ public class HttpRequest<T>{
 
     public Builder basicAuthorization(String username, String password){
       String passToken = username + ":" + password;
-      byte[] authorizationBytes = Base64.encodeBase64(passToken.getBytes());
-      this.properties.put("Authorization", "Basic " + new String(authorizationBytes).trim());
+      String authorization = BaseEncoding.base64().encode(passToken.getBytes());
+      this.properties.put("Authorization", "Basic " + authorization.trim());
       return this;
     }
 

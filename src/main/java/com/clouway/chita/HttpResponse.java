@@ -1,8 +1,9 @@
 package com.clouway.chita;
 
+import com.google.common.io.ByteStreams;
 import com.google.inject.TypeLiteral;
-import org.apache.commons.io.IOUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -42,7 +43,7 @@ public class HttpResponse {
 
     this.code = code;
     this.statusMessage = statusMessage;
-    this.inputStream = IOUtils.toInputStream("");
+    this.inputStream = new ByteArrayInputStream(new byte[] {});
   }
 
   /**
@@ -140,7 +141,7 @@ public class HttpResponse {
     }
 
     try {
-      responseBytes = IOUtils.toByteArray(inputStream);
+      responseBytes = ByteStreams.toByteArray(inputStream);
       return responseBytes;
     } catch (IOException e) {
       e.printStackTrace();
